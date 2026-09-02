@@ -1,0 +1,373 @@
+/* Rock Paper Scissors - Premium - HTML+CSS ONLY - JS UNTOUCHED */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&display=swap');
+
+* { box-sizing: border-box; }
+
+body {
+  background-color: #101010;
+  background-image: 
+    radial-gradient(1000px 500px at 50% -5%, rgba(255,255,255,0.07), transparent 60%),
+    radial-gradient(600px 400px at 15% 15%, rgba(99,102,241,0.06), transparent 50%),
+    radial-gradient(600px 400px at 85% 15%, rgba(236,72,153,0.05), transparent 50%);
+  color: white;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  text-align: center;
+  margin: 0;
+  padding: 28px 20px 36px;
+  -webkit-font-smoothing: antialiased;
+}
+
+.shell {
+  width: 100%;
+  max-width: 640px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: fadeIn 0.6s cubic-bezier(0.16,1,0.3,1);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.Title {
+  font-size: 44px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 0.95;
+  margin: 0 0 8px;
+  background: linear-gradient(to bottom, #ffffff 25%, #9f9fa9 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.subtitle {
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #71717a;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+/* --- Move buttons --- */
+.moves-row {
+  display: flex;
+  gap: 20px;
+  margin: 32px 0 28px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.move-btn {
+  background: rgba(255,255,255,0.06);
+  width: 132px;
+  height: 132px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255,255,255,0.14);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  transition: all 0.28s cubic-bezier(0.16,1,0.3,1);
+  position: relative;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: 
+    0 0 0 1px rgba(255,255,255,0.04) inset,
+    0 8px 32px rgba(0,0,0,0.45);
+}
+
+.move-btn::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(255,255,255,0.22), rgba(255,255,255,0.04));
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  padding: 1.5px;
+  opacity: 0;
+  transition: opacity 0.28s;
+}
+
+.move-btn:hover {
+  background: rgba(255,255,255,0.10);
+  border-color: rgba(255,255,255,0.85);
+  transform: translateY(-5px) scale(1.04);
+  box-shadow: 
+    0 0 0 1px rgba(255,255,255,0.12) inset,
+    0 24px 48px rgba(0,0,0,0.55),
+    0 0 80px rgba(255,255,255,0.07);
+}
+
+.move-btn:hover::after { opacity: 1; }
+.move-btn:active { transform: translateY(0) scale(0.96); transition-duration: 0.12s; }
+.move-btn:focus-visible { outline: 2px solid white; outline-offset: 4px; }
+
+.move-icon {
+  height: 54px;
+  width: 54px;
+  object-fit: contain;
+  filter: drop-shadow(0 6px 16px rgba(0,0,0,0.5));
+  transition: transform 0.28s cubic-bezier(0.16,1,0.3,1);
+}
+
+.move-btn:hover .move-icon {
+  transform: scale(1.14) rotate(-5deg);
+}
+
+/* --- Result --- */
+.result {
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  min-height: 34px;
+  margin: 6px 0 6px;
+  line-height: 1.1;
+}
+
+.result:empty { opacity: 0; }
+.result:not(:empty) {
+  animation: popIn 0.4s cubic-bezier(0.16,1,0.3,1);
+}
+
+@keyframes popIn {
+  0% { transform: scale(0.92); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* Your JS writes "You win" / "You lose" / "Tie" - we color via CSS attribute? 
+   Since we can't use JS, we style all same white, but if you want green/red you can add class manually.
+   Premium look keeps it white with glow. */
+.js-result {
+  text-shadow: 0 0 24px rgba(255,255,255,0.12);
+}
+
+/* --- Moves display: You [img] [img] Computer --- */
+.moves-display, .js-moves {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin: 12px auto 18px;
+  min-height: 24px;
+  font-size: 14px;
+  color: #a1a1aa;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+.js-moves:empty {
+  display: none !important;
+}
+
+.js-moves:not(:empty) {
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 999px;
+  padding: 12px 24px;
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.35), 0 0 0 1px rgba(255,255,255,0.04) inset;
+  animation: popIn 0.45s cubic-bezier(0.16,1,0.3,1);
+}
+
+.js-moves .move-icon {
+  height: 36px;
+  width: 36px;
+  background: rgba(0,0,0,0.35);
+  border-radius: 50%;
+  padding: 6px;
+  border: 1px solid rgba(255,255,255,0.14);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.35);
+}
+
+/* --- Score --- */
+.score {
+  margin-top: 10px;
+  font-size: 13px;
+  letter-spacing: 0.03em;
+  color: #d4d4d8;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 999px;
+  padding: 10px 20px;
+  display: inline-flex;
+  gap: 18px;
+  backdrop-filter: blur(12px);
+  font-weight: 500;
+}
+
+/* --- Buttons --- */
+.actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 28px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.reset-btn, .auto-play-btn {
+  border-radius: 999px;
+  padding: 12px 22px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1.5px solid;
+  transition: all 0.22s cubic-bezier(0.16,1,0.3,1);
+  font-family: inherit;
+  letter-spacing: -0.01em;
+}
+
+.reset-btn {
+  background: transparent;
+  border-color: rgba(255,255,255,0.20);
+  color: white;
+}
+
+.reset-btn:hover {
+  background: white;
+  border-color: white;
+  color: black;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(255,255,255,0.16);
+}
+
+.auto-play-btn {
+  background: white;
+  border-color: white;
+  color: black;
+  box-shadow: 0 6px 20px rgba(255,255,255,0.16);
+}
+
+.auto-play-btn:hover {
+  background: #e5e5e5;
+  border-color: #e5e5e5;
+  transform: translateY(-1px);
+  box-shadow: 0 10px 28px rgba(255,255,255,0.22);
+}
+
+.reset-btn:active, .auto-play-btn:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* --- Reset confirmation --- */
+.js-reset-confirmation {
+  display: block;
+  text-align: center;
+  font-size: 14px;
+  color: #d4d4d8;
+  margin: 18px 0 0;
+  min-height: 0;
+}
+
+.js-reset-confirmation:not(:empty) {
+  background: rgba(24,24,27,0.92);
+  border: 1px solid rgba(255,255,255,0.14);
+  border-radius: 18px;
+  padding: 18px 20px 16px;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.55);
+  animation: popIn 0.35s cubic-bezier(0.16,1,0.3,1);
+  display: block;
+  text-align: center;
+  max-width: 360px;
+}
+
+.reset-confirm-button {
+  border-radius: 999px;
+  padding: 10px 22px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid;
+  transition: all 0.2s;
+  font-family: inherit;
+  margin: 12px 6px 0;
+  display: inline-block;
+  min-width: 64px;
+}
+
+.js-reset-confirm-yes {
+  background: rgba(239,68,68,0.14);
+  border-color: rgba(239,68,68,0.32);
+  color: #fecaca;
+}
+.js-reset-confirm-yes:hover {
+  background: #ef4444;
+  border-color: #ef4444;
+  color: white;
+}
+
+.js-reset-confirm-no {
+  background: rgba(255,255,255,0.08);
+  border-color: rgba(255,255,255,0.16);
+  color: white;
+}
+.js-reset-confirm-no:hover {
+  background: white;
+  border-color: white;
+  color: black;
+}
+
+/* --- KBD hints --- */
+.kbd-hint {
+  margin-top: 36px;
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  font-size: 11px;
+  color: #71717a;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+.kbd-hint kbd {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 6px;
+  border-radius: 6px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.16);
+  border-bottom-width: 2px;
+  color: #d4d4d8;
+  font-family: 'Inter', ui-monospace, monospace;
+  font-size: 11px;
+  font-weight: 600;
+  box-shadow: 0 1px 0 rgba(255,255,255,0.06) inset;
+}
+
+.kbd-hint .dot { opacity: 0.35; }
+
+/* --- Responsive --- */
+@media (max-width: 640px) {
+  .Title { font-size: 34px; }
+  .moves-row { gap: 12px; margin: 24px 0 20px; }
+  .move-btn { width: 104px; height: 104px; }
+  .move-icon { height: 44px; width: 44px; }
+  .result { font-size: 22px; }
+  .js-moves:not(:empty) { padding: 10px 18px; font-size: 13px; gap: 10px; }
+  .js-moves .move-icon { height: 30px; width: 30px; }
+  .kbd-hint { gap: 10px; font-size: 10px; }
+}
+
+@media (max-width: 380px) {
+  .move-btn { width: 90px; height: 90px; }
+  .moves-row { gap: 10px; }
+}
